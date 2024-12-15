@@ -35,8 +35,8 @@ function App() {
 
   const startNewNumber = () => {
     if (!isPhoneNumberComplete()) {
-      setCurrentNumber(generateRandomNumber());
       setPosition({ x: 4, y: 0 });
+      setCurrentNumber(generateRandomNumber());
     }
   };
 

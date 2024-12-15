@@ -182,9 +182,9 @@ function App() {
 
         <div className="mt-4 text-gray-400 text-xs sm:text-sm">
           <p>Controls:</p>
-          <p>← → : Move left/right (Swipe left/right)</p>
-          <p>↓ : Move down faster (Swipe down)</p>
-          <p>Space : Drop instantly (Double tap)</p>
+          <p>← → : Move left/right (Swipe left/right on mobile)</p>
+          <p>↓ : Move down faster (Swipe down on mobile)</p>
+          <p>Space : Drop instantly (Double tap on mobile)</p>
         </div>
       </div>
     </div>

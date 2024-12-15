@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, TouchEvent } from "react";
 const createNewBag = () => {
   const defaultNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   const numbers = defaultNumbers.slice();
@@ -18,6 +18,7 @@ function App() {
   const [currentNumber, setCurrentNumber] = useState<number>(0);
   const [position, setPosition] = useState({ x: 4, y: 0 });
   const [numberBag, setNumberBag] = useState<number[]>(createNewBag());
+  const [touchStart, setTouchStart] = useState<number | null>(null);
 
   const isPhoneNumberComplete = () => {
     return !phoneNumber.includes("");
@@ -95,34 +96,69 @@ function App() {
     startNewNumber();
   }, []);
 
+  const handleTouchStart = (e: TouchEvent) => {
+    setTouchStart(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    if (!touchStart) return;
+
+    const touchEnd = e.touches[0].clientX;
+    const diff = touchStart - touchEnd;
+
+    if (Math.abs(diff) > 30) {
+      if (diff > 0 && position.x > 0) {
+        setPosition((prev) => ({ ...prev, x: prev.x - 1 }));
+      } else if (diff < 0 && position.x < 9) {
+        setPosition((prev) => ({ ...prev, x: prev.x + 1 }));
+      }
+      setTouchStart(touchEnd);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setTouchStart(null);
+  };
+
+  const handleDoubleTap = () => {
+    setPosition((prev) => ({ ...prev, y: 7 }));
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-900">
-      <div className="p-8 bg-gray-800 rounded-lg shadow-xl">
-        <h2 className="text-2xl font-bold mb-4 text-white text-center">
+    <div className="flex items-center justify-center min-h-screen bg-gray-900 p-4">
+      <div className="p-4 sm:p-8 bg-gray-800 rounded-lg shadow-xl w-[340px] md:w-[504px]">
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 text-white text-center">
           Tetris Phone Number Input
         </h2>
-        <div className="relative w-[440px] h-[320px] bg-gray-700 rounded-lg overflow-hidden">
+        <div
+          className="relative w-full h-[320px] sm:h-[320px] bg-gray-700 rounded-lg overflow-hidden"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onDoubleClick={handleDoubleTap}>
           {!isPhoneNumberComplete() && (
             <div
               style={{
                 position: "absolute",
-                left: `${(position.x + 1) * 40}px`,
-                top: `${position.y * 40}px`,
+                left: `${
+                  (position.x + 1) * (window.innerWidth <= 640 ? 28 : 40)
+                }px`,
+                top: `${position.y * (window.innerWidth <= 640 ? 35 : 40)}px`,
                 transition: "all 0.1s",
               }}
-              className="w-10 h-10 bg-blue-500 rounded-md flex items-center justify-center text-white font-bold">
+              className="w-7 h-7 sm:w-10 sm:h-10 bg-blue-500 rounded-md flex items-center justify-center text-white text-sm sm:text-base font-bold">
               {currentNumber}
             </div>
           )}
 
           <div className="absolute bottom-0 w-full flex">
-            <div className="w-10 h-10 border border-gray-600 flex items-center justify-center text-white font-bold">
+            <div className="w-7 h-7 sm:w-10 sm:h-10 border border-gray-600 flex items-center justify-center text-white text-sm sm:text-base font-bold">
               +
             </div>
             {phoneNumber.map((num, idx) => (
               <div
                 key={idx}
-                className="w-10 h-10 border border-gray-600 flex items-center justify-center text-white font-bold">
+                className="w-7 h-7 sm:w-10 sm:h-10 border border-gray-600 flex items-center justify-center text-white text-sm sm:text-base font-bold">
                 {num}
               </div>
             ))}
@@ -144,11 +180,11 @@ function App() {
           </button>
         </div>
 
-        <div className="mt-4 text-gray-400 text-sm">
+        <div className="mt-4 text-gray-400 text-xs sm:text-sm">
           <p>Controls:</p>
-          <p>← → : Move left/right</p>
-          <p>↓ : Move down faster</p>
-          <p>Space : Drop instantly</p>
+          <p>← → : Move left/right (Swipe left/right)</p>
+          <p>↓ : Move down faster (Swipe down)</p>
+          <p>Space : Drop instantly (Double tap)</p>
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@
 
 A unique and entertaining phone number input component inspired by Tetris. This project was created as a contribution to "Bad UI Battles", combining classic Tetris gameplay mechanics with form input functionality.
 
-![Project Demo GIF](demo.gif)
+[Live Demo](https://tetris-input.vercel.app/)
 
 ## 🎮 How It Works
 
